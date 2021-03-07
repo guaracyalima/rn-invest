@@ -128,18 +128,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 
-
-
-
-
-
-
-
-
-
-
-
-
   centeredView: {
     flex: 1,
     justifyContent: "center",

@@ -6,36 +6,43 @@ import {
   TextInput,
   TouchableOpacity,
   Modal,
-  Pressable
+  Pressable,
 } from "react-native";
 import { Formik } from "formik";
 import style from "./styles";
 
 const Resgate = ({ navigation, route }) => {
-  const [valorTotalAResgatar, setValorTotalAResgatar] = useState(0.0);
-  
+  const [valorTotalAResgatar, setValorTotalAResgatar] = useState(0);
+
+  let global = 0;
   const [data, setData] = useState();
   const [nomeDoInvestimento, setNomeDoInvestimento] = useState([]);
   const [saldoTotalDisponivel, setSaldoTotalDisponivel] = useState([]);
   const [acoes, setAcoes] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalSolicitarPreenchimentoDeValor, setModalSolicitarPreenchimentoDeValor] = useState(false);
+  const [
+    modalSolicitarPreenchimentoDeValor,
+    setModalSolicitarPreenchimentoDeValor,
+  ] = useState(false);
 
   useEffect(() => {
     setData(route.params.investimento);
     setAcoes(route.params.investimento.acoes);
     setNomeDoInvestimento(route.params.investimento.nome);
     setSaldoTotalDisponivel(route.params.investimento.saldoTotalDisponivel);
-    
   }, []);
 
   const executarResgate = () => {
-    if(valorTotalAResgatar <= 0 || valorTotalAResgatar == undefined || valorTotalAResgatar == null){
+    if (
+      valorTotalAResgatar <= 0 ||
+      valorTotalAResgatar == undefined ||
+      valorTotalAResgatar == null
+    ) {
       setModalSolicitarPreenchimentoDeValor(true);
-    }else{
-      setModalVisible(true)
+    } else {
+      setModalVisible(true);
     }
-  }
+  };
   return (
     <View style={style.container}>
       <View style={style.header}>
@@ -92,27 +99,25 @@ const Resgate = ({ navigation, route }) => {
                 validate={(values) => {
                   const errors = {};
                   let _valorResgate = values.valorResgate;
-                
-                  
 
-                  let percentual = ((data.saldoTotalDisponivel * item.percentual) / 100).toFixed(2);
+                  let percentual = (
+                    (data.saldoTotalDisponivel * item.percentual) /
+                    100
+                  ).toFixed(2);
                   let percentualEmRs = percentual.toLocaleString("pt-br", {
                     style: "currency",
                     currency: "BRL",
                   });
 
                   if (!_valorResgate || _valorResgate == 0) {
-                    errors.valorResgate = "Valor de resgate não pode ser menor que 0";
+                    errors.valorResgate =
+                      "Valor de resgate não pode ser menor que 0";
                   } else if (_valorResgate > Math.ceil(percentual)) {
                     errors.valorResgate = `O Valor do resgate não pode ser maior que R$ ${percentualEmRs}`;
-                  } 
-                  
-                  let _totalresgate =  valorTotalAResgatar + _valorResgate
-                  console.log("\n\n");
-                  console.log("valor base "+ valorTotalAResgatar );
-                  console.log("valor informado  "+ _valorResgate );
-                  console.log("_totalresgate ", _totalresgate);
-                  setValorTotalAResgatar(_totalresgate)
+                  }
+
+                  global = global + Number.parseFloat(_valorResgate);
+                  setValorTotalAResgatar(global);
 
                   return errors;
                 }}
@@ -128,13 +133,13 @@ const Resgate = ({ navigation, route }) => {
                       keyboardType="numeric"
                       onChangeText={props.handleChange("valorResgate")}
                       onBlur={props.handleBlur("valorResgate")}
-                      value={(props.values.valorResgate)}
+                      value={props.values.valorResgate}
                       clearTextOnFocus={true}
                       onSubmitEditing={() => {
                         this.valorResgateInput.focus();
                       }}
                     />
-            
+
                     {props.touched.valorResgate && props.errors.valorResgate ? (
                       <Text style={style.error}>
                         {props.errors.valorResgate}
@@ -149,63 +154,72 @@ const Resgate = ({ navigation, route }) => {
       />
       <View>
         <View style={style.valorTotalAResgatar}>
-          <Text style={style.valorTotalAResgatarTitulo}>Valor total a resgatar</Text>
+          <Text style={style.valorTotalAResgatarTitulo}>
+            Valor total a resgatar
+          </Text>
           <Text style={style.headerText}>
-           
-            {valorTotalAResgatar.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}
+            {valorTotalAResgatar.toLocaleString("pt-br", {
+              style: "currency",
+              currency: "BRL",
+            })}
           </Text>
         </View>
       </View>
       <View style={style.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={style.centeredView}>
-          <View style={style.modalView}>
-            <Text style={style.modalResgateTitulo}>RESGATE EFETUADO!</Text>
-            <Text>O valor solicitado estará em sua conta em até 5 dias úteis!</Text>
-            <Pressable
-              style={[style.botaoResgate]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={style.textoBotaoResgate}>NOVO RESGATE</Text>
-            </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={style.centeredView}>
+            <View style={style.modalView}>
+              <Text style={style.modalResgateTitulo}>RESGATE EFETUADO!</Text>
+              <Text>
+                O valor solicitado estará em sua conta em até 5 dias úteis!
+              </Text>
+              <Pressable
+                style={[style.botaoResgate]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={style.textoBotaoResgate}>NOVO RESGATE</Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
 
-
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalSolicitarPreenchimentoDeValor}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalSolicitarPreenchimentoDeValor(!modalSolicitarPreenchimentoDeValor);
-        }}
-      >
-        <View style={style.centeredView}>
-          <View style={style.modalView}>
-            <Text style={style.modalResgateTitulo}>ATENÇÃO!</Text>
-            <Text>Informe pelomenos uma ação a resgatar!</Text>
-            <Pressable
-              style={[style.botaoResgate]}
-              onPress={() => setModalSolicitarPreenchimentoDeValor(!modalSolicitarPreenchimentoDeValor)}
-            >
-              <Text style={style.textoBotaoResgate}>Fechar</Text>
-            </Pressable>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalSolicitarPreenchimentoDeValor}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalSolicitarPreenchimentoDeValor(
+              !modalSolicitarPreenchimentoDeValor
+            );
+          }}
+        >
+          <View style={style.centeredView}>
+            <View style={style.modalView}>
+              <Text style={style.modalResgateTitulo}>ATENÇÃO!</Text>
+              <Text>Informe pelomenos uma ação a resgatar!</Text>
+              <Pressable
+                style={[style.botaoResgate]}
+                onPress={() =>
+                  setModalSolicitarPreenchimentoDeValor(
+                    !modalSolicitarPreenchimentoDeValor
+                  )
+                }
+              >
+                <Text style={style.textoBotaoResgate}>Fechar</Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </Modal>
-     
-     
-    </View>
+        </Modal>
+      </View>
       <View>
         <Pressable
           style={style.botaoResgateModal}

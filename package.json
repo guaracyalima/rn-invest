@@ -1,4 +1,6 @@
 {
+  "version": "1.0.0",
+  "description": "Resgate de investimentos",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -48,5 +50,18 @@
     },
     "setupFiles": ["./node_modules/react-native-gesture-handler/jestSetup.js"],
     "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"]
-  }
+  },
+  "keywords": [
+    "js",
+    "tdd",
+    "react native",
+    "investimentos",
+    "resgate"
+  ],
+  "author": "Guaracy A Lima <guaracyaraujolima@gmail.com> (http://linkedin.com/in/guaracyalima/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/guaracyalima/rn-invest"
+  },
+  "homepage": "https://github.com/guaracyalima/rn-invest#readme"
 }
