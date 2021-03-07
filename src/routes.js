@@ -16,8 +16,39 @@ const Stack = createStackNavigator();
       <Stack.Navigator initialRouterName="Investimentos">
 
 
-        <Stack.Screen name="Investimentos" component={Investimentos} />
-        <Stack.Screen name="Resgate" component={Resgate} />
+        <Stack.Screen 
+                    name="Investimentos" 
+                    component={Investimentos} 
+                    options={{
+                      title: 'Resgate',
+                      headerStyle: {
+                        backgroundColor: '#005aa5',
+                        borderBottomWidth: 5,
+                        borderBottomColor: '#fae128'
+                      },
+                      headerTintColor: '#fff',
+                      headerTitleStyle: {
+                        fontWeight: 'bold',
+                      },
+
+                    }}
+                    />
+        <Stack.Screen 
+                      name="Resgate" 
+                      component={Resgate} 
+                      options={{
+                        title: 'Resgate',
+                        headerStyle: {
+                          backgroundColor: '#005aa5',
+                          borderBottomWidth: 5,
+                          borderBottomColor: '#fae128'
+                        },
+                        headerTintColor: '#fff',
+                        headerTitleStyle: {
+                          fontWeight: 'bold',
+                        },
+  
+                      }}/>
 
       </Stack.Navigator>
     </NavigationContainer>

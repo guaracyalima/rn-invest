@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
-    "react-number-format": "^4.4.4"
+    "formik": "^2.2.6",
+    "react-number-format": "^4.4.4",
+    "yup": "^0.32.9"
   },
   "private": true
 }

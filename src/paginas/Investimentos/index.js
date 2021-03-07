@@ -1,18 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import style from './styles'
 
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-});
 
 
 const Investimentos = ({navigation}) => {
@@ -37,7 +27,11 @@ const Investimentos = ({navigation}) => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
+    <View style={style.container}>
+        <View style={style.header}>
+          <Text style={style.headerText}>INVESTIMENTOS</Text>
+          <Text style={style.headerText}>R$</Text>
+        </View>
       {carregandoDados ? <ActivityIndicator/> : (
         <FlatList
           data={data}
@@ -46,12 +40,17 @@ const Investimentos = ({navigation}) => {
             <TouchableOpacity 
                               onPress={() => detalharInvestimento({item})} 
                               disabled={item.indicadorCarencia !=='N'}>
-              <View>
-                <View>
-                <Text>{item.nome}</Text>
-                <Text>{item.objetivo}</Text>
+              <View style={style.listMain}>
+                <View >
+                  <Text style={item.indicadorCarencia !=='N' ?
+                                {...style.investimentoNomeDisabled} : style.investimentoNome }>
+                                  {item.nome}
+                  </Text>
+                  <Text style={style.objetivo}>{item.objetivo}</Text>
                 </View>
-                <Text>{item.saldoTotalDisponivel}</Text>
+                <Text>
+                  {item.saldoTotalDisponivel.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}
+                </Text>
               </View>
             </TouchableOpacity>
             
