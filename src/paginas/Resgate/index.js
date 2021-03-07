@@ -12,16 +12,14 @@ import { Formik } from "formik";
 import style from "./styles";
 
 const Resgate = ({ navigation, route }) => {
-  const [valorTotalAResgatar, setValorTotalAResgatar] = useState(0);
-  const valorResgateInput = null;
+  const [valorTotalAResgatar, setValorTotalAResgatar] = useState(0.0);
+  
   const [data, setData] = useState();
   const [nomeDoInvestimento, setNomeDoInvestimento] = useState([]);
   const [saldoTotalDisponivel, setSaldoTotalDisponivel] = useState([]);
   const [acoes, setAcoes] = useState([]);
-  const [valorAresgatar, onChangeTextWithValidation] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-
-  const input = React.createRef();
+  const [modalSolicitarPreenchimentoDeValor, setModalSolicitarPreenchimentoDeValor] = useState(false);
 
   useEffect(() => {
     setData(route.params.investimento);
@@ -31,6 +29,13 @@ const Resgate = ({ navigation, route }) => {
     
   }, []);
 
+  const executarResgate = () => {
+    if(valorTotalAResgatar <= 0 || valorTotalAResgatar == undefined || valorTotalAResgatar == null){
+      setModalSolicitarPreenchimentoDeValor(true);
+    }else{
+      setModalVisible(true)
+    }
+  }
   return (
     <View style={style.container}>
       <View style={style.header}>
@@ -88,11 +93,7 @@ const Resgate = ({ navigation, route }) => {
                   const errors = {};
                   let _valorResgate = values.valorResgate;
                 
-                  console.log("\n\n");
-                
-                  console.log("_valorResgate ", _valorResgate);
-                  console.log("data.saldoTotalDisponivel ", data.saldoTotalDisponivel);
-                  console.log("item.percentual ", item.percentual);
+                  
 
                   let percentual = ((data.saldoTotalDisponivel * item.percentual) / 100).toFixed(2);
                   let percentualEmRs = percentual.toLocaleString("pt-br", {
@@ -100,22 +101,19 @@ const Resgate = ({ navigation, route }) => {
                     currency: "BRL",
                   });
 
-                  console.log("percentual ", percentual);
-                  console.log("percentualEmRs ", percentualEmRs);
-                  console.log("Comparação", _valorResgate > Math.ceil(percentual));
-                  console.log("valorTotalAResgatar", valorTotalAResgatar);
-                  console.log("\n\n");
-
                   if (!_valorResgate || _valorResgate == 0) {
                     errors.valorResgate = "Valor de resgate não pode ser menor que 0";
                   } else if (_valorResgate > Math.ceil(percentual)) {
                     errors.valorResgate = `O Valor do resgate não pode ser maior que R$ ${percentualEmRs}`;
-                    _valorResgate = 0;
                   } 
+                  
+                  let _totalresgate =  valorTotalAResgatar + _valorResgate
+                  console.log("\n\n");
+                  console.log("valor base "+ valorTotalAResgatar );
+                  console.log("valor informado  "+ _valorResgate );
+                  console.log("_totalresgate ", _totalresgate);
+                  setValorTotalAResgatar(_totalresgate)
 
-                 let totalresgate = Number(valorTotalAResgatar) + Number(_valorResgate)
-                  setValorTotalAResgatar(totalresgate);
-                  console.log("valorTotalAResgatar ", totalresgate);
                   return errors;
                 }}
               >
@@ -181,12 +179,37 @@ const Resgate = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalSolicitarPreenchimentoDeValor}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalSolicitarPreenchimentoDeValor(!modalSolicitarPreenchimentoDeValor);
+        }}
+      >
+        <View style={style.centeredView}>
+          <View style={style.modalView}>
+            <Text style={style.modalResgateTitulo}>ATENÇÃO!</Text>
+            <Text>Informe pelomenos uma ação a resgatar!</Text>
+            <Pressable
+              style={[style.botaoResgate]}
+              onPress={() => setModalSolicitarPreenchimentoDeValor(!modalSolicitarPreenchimentoDeValor)}
+            >
+              <Text style={style.textoBotaoResgate}>Fechar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+     
      
     </View>
       <View>
         <Pressable
           style={style.botaoResgateModal}
-          onPress={() => setModalVisible(true)}
+          onPress={() => executarResgate()}
           underlayColor="#fff"
         >
           <Text style={style.textoBotaoResgate}>CONFIRMAR RESGATE</Text>
